@@ -2,6 +2,7 @@ name: ci
 
 on:
   push:
+    branches: [main]
   pull_request:
 
 permissions:
@@ -14,11 +15,13 @@ jobs:
 
     steps:
       - name: checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: setup node.js
         uses: actions/setup-node@v6
-        with: { node-version: 26 }
+        with:
+          node-version: 26
+          cache: npm
 
       - name: install deps
         run: npm ci
@@ -28,7 +31,3 @@ jobs:
 
       - name: build
         run: npm run build
-
-  push-ing:
-    name: push to container registry
-    runs-on: ubuntu-latest
