@@ -1,0 +1,204 @@
+@import url("reset.css");
+@import url("fonts.css");
+
+:root {
+    --document-margin: clamp(1rem, 0.4rem + 2vw, 2rem);
+    --content-regular: 690px;
+    --content-large: 1160px;
+
+    --font-family: "SpaceGrotesk", sans-serif;
+    --font-family-heading: "Mayenne", sans-serif;
+    --header-py: 1rem;
+    --font-size: 16px;
+    --line-height: 1.287;
+    --line-spacing: -.01rem;
+    --font-weight: 435;
+    --border-width: .125rem;
+
+    --raisin: rgb(36 33 36);
+    --wine-06: rgb(128 2 68);
+    --wine-05: rgb(201 82 133);
+    --wine-03: rgb(250 208 227);
+    --wine-02: rgb(255 228 231);
+    --wine-01: rgb(255 243 240);
+    --cosmos-06: rgb(53 30 98);
+    --cosmos-05: rgb(121 58 186);
+    --cosmos-04: rgb(162 123 221);
+    --cosmos-03: rgb(208 181 252);
+    --cosmos-02: rgb(239 228 255);
+    --cosmos-01: rgb(247 242 255);
+    --ocean-06: rgb(37 29 127);
+    --ocean-05: rgb(74 67 225);
+    --ocean-04: rgb(128 140 255);
+    --ocean-03: rgb(165 189 255);
+    --ocean-02: rgb(209 220 255);
+    --ocean-01: rgb(238 245 255);
+    --moss-06: rgb(26 78 46);
+    --moss-05: rgb(1 138 56);
+    --moss-04: rgb(95 171 82);
+    --moss-03: rgb(191 212 103);
+    --moss-02: rgb(216 237 151);
+    --moss-01: rgb(241 248 216);
+    --coral-06: rgb(209 52 36);
+    --coral-05: rgb(247 85 37);
+    --coral-04: rgb(255 116 31);
+    --coral-03: rgb(255 158 41);
+    --coral-02: rgb(255 204 131);
+    --coral-01: rgb(255 242 228);
+    --saffron-05: rgb(216 151 0);
+    --saffron-04: rgb(237 180 23);
+    --saffron-03: rgb(240 207 89);
+    --saffron-02: rgb(241 232 155);
+    --saffron-01: rgb(252 249 230);
+    --border-radius-sm: .625rem;
+    --border-radius-md: .75rem;
+    --border-radius-lg: 1rem;
+    --border-radius-xl: 1.5rem;
+    --border-radius-full: 10rem;
+    --box-shadow-sm: 0 2px 6px rgb(36 33 36 / 13%);
+    --box-shadow-md: 0 6px 14px rgb(36 33 36 / 13%);
+}
+
+:root {
+    box-sizing: border-box;
+    font-family: var(--font-family);
+    font-size: var(---font-size);
+    font-weight: var(---font-weight);
+    line-height: var(---line-height);
+    color: var(--raisin);
+    background-color: #FAFAFA;
+    -webkit-tap-highlight-color: transparent;
+
+    -webkit-text-size-adjust: none;
+
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: geometricPrecision;
+}
+
+@view-transition {
+    navigation: auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    :root {
+        scroll-behavior: smooth;
+    }
+}
+
+::selection {
+    background-color: var(--ocean-02);
+}
+
+::-moz-selection {
+    background-color: var(--ocean-02);
+}
+
+body {
+    margin: 0;
+    padding: 0;
+
+    display: flex;
+    flex-flow: column nowrap;
+    min-height: 100vh;
+}
+
+a {
+    color: inherit;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    a:focus-visible {
+        outline-offset: .5rem;
+        outline: .25rem dashed var(--coral-06);
+        transition: outline-offset 200ms ease !important;
+    }
+}
+
+@media (min-width: 768px) {
+    :root {
+        --header-py: 1.25rem;
+    }
+}
+
+ol,
+ul {
+    font: inherit;
+    margin: 0;
+    border: 0;
+    list-style: none;
+    padding: 0;
+}
+
+article {
+    gap: clamp(2rem, 0.8rem + 4vw, 4rem);
+}
+
+article {
+    display: flex;
+    flex-flow: column nowrap;
+}
+
+h1 {
+    margin-top: 0;
+    margin-bottom: 0;
+    font-family: var(--font-family-heading);
+
+    font-size: clamp(2rem, 1.4rem + 2vw, 3rem);
+    line-height: .98;
+
+    font-weight: bold;
+    letter-spacing: -0.1rem;
+}
+
+h2 {
+    margin-top: 0;
+
+    /* 16px < ... > 22px */
+    margin-bottom: clamp(1rem, 0.775rem + 0.75vw, 1.375rem);
+
+    font-family: var(--font-family);
+
+    font-size: clamp(1.375rem, 0.775rem + 2vw, 2.375rem);
+    line-height: 1;
+
+    font-weight: 600;
+    letter-spacing: -0.1rem;
+}
+
+h3 {
+    margin-top: 0;
+    margin-bottom: 0;
+    font-family: var(--font-family-heading);
+
+    font-size: clamp(1.25rem, 1.1rem + 0.5vw, 1.5rem);
+    line-height: 1.25;
+
+    font-weight: bold;
+    letter-spacing: -0.025rem;
+    text-transform: uppercase;
+}
+
+p,
+li,
+summary,
+small {
+    margin-top: 0;
+    margin-bottom: 0;
+
+    font-size: clamp(1rem, 0.85rem + 0.5vw, 1.25rem);
+    font-weight: var(--font-weight);
+    line-height: 1.35;
+
+    /* Prevent widow symbols .. but not words :( .. could be dangerous
+    white-space: break-spaces;
+    */
+}
+
+/* Dynamic spacing between paragraphs .. */
+p + p,
+ul + p,
+p + ul {
+    /* 16px < ... > 22px */
+    margin-top: clamp(1rem, 0.775rem + 0.75vw, 1.375rem);
+}

@@ -1,0 +1,28 @@
+# https://caddyserver.com/docs/caddyfile
+#
+# Setup caddy untuk serving prerendered pages, apapun yang tidak di prerendered
+# akan di serve 404.html
+#
+:80 {
+    root * /srv
+    encode zstd gzip
+
+    # File pada `/_app/immutable/*` di hashed sehingga memperbolehkan untuk 
+    # cache indefinitely
+    #
+    handle /_app/immutable/* {
+        header Cache-Control "public, max-age=31536000, immutable"
+        file_server
+    }
+
+    handle {
+        header Cache-Control "no-cache"
+        try_files {path} {path}.html {path}/index.html
+        file_server
+    }
+
+    handle_errors {
+        rewrite * /404.html
+        file_server
+    }
+}

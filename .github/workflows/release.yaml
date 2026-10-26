@@ -1,0 +1,9 @@
+name: release (bump image tag)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:

@@ -1,0 +1,16 @@
+{
+    "nodeModulesDir": "manual",
+    "exclude": ["build", "node_modules"],
+    "fmt": {
+        "exclude": ["package-lock.json"],
+        "indentWidth": 4,
+        "lineWidth": 100,
+        "trailingCommas": "onlyMultiLine",
+        "operatorPosition": "nextLine"
+    },
+    "compilerOptions": {
+        "lib": ["dom", "dom.iterable", "esnext"],
+        "strict": true,
+        "jsx": "react-jsx"
+    }
+}

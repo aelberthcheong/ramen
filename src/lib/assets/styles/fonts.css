@@ -1,0 +1,15 @@
+@font-face {
+    font-family: 'Mayenne';
+    font-weight: bold;
+    font-style: normal;
+    font-display: block;
+    src: url('../fonts/Mayenne_Sans-Regular_web.woff2') format('woff2');
+}
+
+@font-face {
+    font-family: 'SpaceGrotesk';
+    font-weight: 400 700;
+    font-display: block;
+    src: url('../fonts/SpaceGrotesk-Variable.woff2') format('woff2 supports variations'),
+        url('../fonts/SpaceGrotesk-Variable.woff2') format('woff2-variations');
+}
