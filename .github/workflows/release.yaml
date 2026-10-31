@@ -1,4 +1,4 @@
-name: release (bump image tag)
+name: release
 
 on:
   workflow_dispatch:

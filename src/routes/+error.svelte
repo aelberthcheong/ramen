@@ -1,14 +1,32 @@
 <script lang="ts">
     import Logo from "#lib/components/Logo.svelte";
+    import { page } from "$app/state";
+
+    const status = $derived(page.status);
+    const title = $derived(
+        status === 404 ? "Page Not Found" : "Something Went Wrong",
+    );
+    const description = $derived(
+        status === 404
+            ? "I don't think this is the web page you are looking for."
+            : "An unexpected error occurred.",
+    );
 </script>
+
+<svelte:head>
+    <title>{status} • Ramen</title>
+</svelte:head>
 
 <section>
     <div>
         <Logo width="240px" height="140px" />
-        <h1>Page Not Found</h1>
+        <h1>{title}</h1>
         <p>
-            I don't think this is the web page you are looking for. <br />
-            Go back to <a href="/">Home.</a>
+            {description}
+            {#if page.url.pathname !== "/"}
+                <br />
+                Go back to <a href="/">Home.</a>
+            {/if}
         </p>
     </div>
 </section>

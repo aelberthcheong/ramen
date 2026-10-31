@@ -62,9 +62,9 @@
 :root {
     box-sizing: border-box;
     font-family: var(--font-family);
-    font-size: var(---font-size);
-    font-weight: var(---font-weight);
-    line-height: var(---line-height);
+    font-size: var(--font-size);
+    font-weight: var(--font-weight);
+    line-height: var(--line-height);
     color: var(--raisin);
     background-color: #FAFAFA;
     -webkit-tap-highlight-color: transparent;

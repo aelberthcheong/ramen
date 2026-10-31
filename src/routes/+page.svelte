@@ -1,8 +1,15 @@
 <script lang="ts">
     import Logo from "#lib/components/Logo.svelte";
+    import Carousel from "#lib/components/Carousel.svelte";
+
+    let { data } = $props();
 </script>
 
-<section>
+<svelte:head>
+    <title>Ramen</title>
+</svelte:head>
+
+<section class="hero">
     <header>
         <Logo width="240px" height="140px" />
         <h1>Ramen. . .</h1>
@@ -12,10 +19,10 @@
         </p>
     </header>
 </section>
-<section></section>
+<Carousel shops={data.shops} />
 
 <style>
-    section:first-of-type {
+    .hero {
         padding-left: var(--document-margin);
         padding-right: var(--document-margin);
 
@@ -24,14 +31,14 @@
         align-items: center;
     }
 
-    section:first-of-type header {
+    .hero header {
         display: grid;
         justify-items: center;
         gap: 0.75rem;
         text-align: center;
-    }
 
-    section:first-of-type header p {
-        max-width: 36rem;
+        & p {
+            max-width: 36rem;
+        }
     }
 </style>
