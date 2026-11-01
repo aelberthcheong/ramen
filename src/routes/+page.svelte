@@ -7,6 +7,25 @@
 
 <svelte:head>
     <title>Ramen</title>
+    <meta
+        name="description"
+        content="A compendium of world-famous Japanese ramen shops."
+    />
+    <link rel="canonical" href="https://ramen.aelberthcheong.dev/" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Ramen" />
+    <meta property="og:title" content="Ramen" />
+    <meta
+        property="og:description"
+        content="A compendium of world-famous Japanese ramen shops."
+    />
+    <meta property="og:url" content="https://ramen.aelberthcheong.dev/" />
+    <meta
+        property="og:image"
+        content="https://ramen.aelberthcheong.dev/og.png"
+    />
+    <meta name="twitter:card" content="summary_large_image" />
 </svelte:head>
 
 <section class="hero">
