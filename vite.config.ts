@@ -11,31 +11,7 @@ export default defineConfig({
                     filename.split(/[/\\]/).includes("node_modules") ? undefined : true,
             },
             adapter: adapter({ fallback: "404.html" }),
+            prerender: { handleHttpError: "warn" },
         }),
     ],
-    /**
-     * Custom chunking is optional, and SvelteKit’s defaults are usually fine.
-     * Only keep it if we have a measured reason.
-     */
-    // build: {
-    //     rollupOptions: {
-    //         platform: "browser",
-    //         output: {
-    //             codeSplitting: {
-    //                 groups: [
-    //                     {
-    //                         test: /node_modules[\\/]bits-ui[\\/]/,
-    //                         name: "bits-ui",
-    //                         priority: 1,
-    //                     },
-    //                     {
-    //                         test: /node_modules/,
-    //                         name: "vendor",
-    //                         priority: 0,
-    //                     },
-    //                 ],
-    //             },
-    //         },
-    //     },
-    // },
 });
