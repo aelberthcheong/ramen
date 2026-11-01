@@ -15,7 +15,7 @@
         <h1>Ramen. . .</h1>
         <p>
             A compendium for those with a gluttonous appetite for world-famous
-            Japanese gastronomy.
+            Japanese cuisine.
         </p>
     </header>
 </section>

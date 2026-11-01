@@ -11,6 +11,8 @@
                 © 2026 Ramen • Powered by
                 <a
                     href="https://github.com/yusukebe/ramen-api"
+                    rel="noopener noreferrer"
+                    target="_blank"
                     aria-label="ramen-api">Ramen API</a
                 >
             </p>
