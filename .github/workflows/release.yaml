@@ -40,18 +40,3 @@ jobs:
             ${{ env.IMAGE }}:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
-
-      - name: bump image tag
-        run: |
-          # adjust the file and key to match your manifest
-          yq -i '.image.tag = "${{ github.sha }}"' deploy/values.yaml
-
-          if git diff --quiet; then
-            echo "tag already up to date"
-            exit 0
-          fi
-
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git commit -am "chore: bump image tag to ${{ github.sha }}"
-          git push
