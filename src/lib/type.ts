@@ -1,4 +1,4 @@
-import type { LegacyComponentType } from "svelte/legacy";
+import type Github from "../assets/icons/Github.svelte";
 
 /**
  * @see {@link https://github.com/yusukebe/ramen-api | Author}
@@ -44,5 +44,5 @@ export type ShopsResponse = {
 export type NavItem = {
     href: string;
     label: string;
-    icon?: LegacyComponentType;
+    icon?: typeof Github;
 };
