@@ -1,0 +1,21 @@
+---
+import Logo from "./ui/Logo.svelte";
+import Navigation from "./ui/Navigation.svelte";
+import { headers } from "../lib/navigation.ts";
+---
+
+<header>
+    <a href="/" aria-label="home">
+        <Logo />
+    </a>
+    <Navigation links={headers} currentPath={Astro.url.pathname} client:load />
+</header>
+
+<style>
+    header {
+        display: flex;
+        align-items: center;
+        flex-shrink: 0;
+        padding: var(--header-py) var(--document-margin);
+    }
+</style>

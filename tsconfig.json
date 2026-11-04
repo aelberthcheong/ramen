@@ -1,15 +1,5 @@
 {
-    "extends": "$app/tsconfig",
-    "exclude": ["node_modules/**", "build/**", ".svelte-kit/**"],
-    "compilerOptions": {
-        "strict": true,
-        "allowJs": true,
-        "checkJs": true,
-        "esModuleInterop": true,
-        "forceConsistentCasingInFileNames": true,
-        "resolveJsonModule": true,
-        "skipLibCheck": true,
-        "sourceMap": true,
-        "moduleResolution": "bundler"
-    }
+    "extends": "astro/tsconfigs/strict",
+    "include": [".astro/types.d.ts", "**/*"],
+    "exclude": ["node_modules/**", "dist/**"]
 }

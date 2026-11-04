@@ -1,0 +1,50 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Logo from "../components/ui/Logo.svelte";
+import Carousel from "../components/Carousel.astro";
+
+import type { ShopsResponse } from "../lib/type.ts";
+
+const resp = await fetch("https://ramen-api.dev/shops?page=1&perPage=10");
+if (!resp.ok) {
+    throw new Error(`Failed to fetch shops: ${resp.status}`);
+}
+
+const { shops } = (await resp.json()) as ShopsResponse;
+---
+
+<Layout>
+    <section class="hero">
+        <header>
+            <Logo width="240px" height="140px" client:visible />
+            <h1>Ramen. . .</h1>
+            <p>
+                A compendium for those with a gluttonous appetite for world-famous
+                Japanese cuisine.
+            </p>
+        </header>
+    </section>
+    <Carousel shops={shops} />
+</Layout>
+
+<style>
+    .hero {
+        padding-left: var(--document-margin);
+        padding-right: var(--document-margin);
+
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .hero header {
+        display: grid;
+        justify-items: center;
+        gap: 0.75rem;
+        text-align: center;
+
+        & p {
+            max-width: 36rem;
+        }
+    }
+</style>

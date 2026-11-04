@@ -1,9 +1,9 @@
 node_modules/
-build/
+dist/
 .github/
-.svelte-kit/
 .vscode/
 .git/
 
 .gitignore
 .gitattributes
+LICENSE

@@ -1,0 +1,79 @@
+---
+import "../assets/styles/main.css";
+import spaceGrotesk from "../assets/fonts/SpaceGrotesk-Variable.woff2?url";
+import mayenne from "../assets/fonts/Mayenne_Sans-Regular_web.woff2?url";
+
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+
+const {
+    title       = "Ramen",
+    description = "A compendium of world-famous Japanese ramen shops.",
+    image       = "/og.png",
+    noindex     = false,
+} = Astro.props;
+
+const pageTitle = title === "Ramen" ? title : `${title} • Ramen`;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const og = new URL(image, Astro.site);
+---
+
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width" />
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+        <link
+            rel="preload"
+            href={spaceGrotesk}
+            as="font"
+            type="font/woff2"
+            crossorigin="anonymous"
+        />
+        <link
+            rel="preload"
+            href={mayenne}
+            as="font"
+            type="font/woff2"
+            crossorigin="anonymous"
+        />
+        <title>{pageTitle}</title>
+
+        {noindex ? (
+            <meta name="robots" content="noindex" />
+        ) : (
+            <>
+                <meta name="description" content={description} />
+                <link rel="canonical" href={canonical} />
+                <meta property="og:type" content="website" />
+                <meta property="og:site_name" content="Ramen" />
+                <meta property="og:title" content={pageTitle} />
+                <meta property="og:description" content={description} />
+                <meta property="og:url" content={canonical} />
+                <meta property="og:image" content={og} />
+                <meta name="twitter:card" content="summary_large_image" />
+            </>        
+        )}
+
+    </head>
+    <body>
+        <Header />
+        <main>
+            <slot />
+        </main>
+        <Footer />
+    </body>
+</html>
+
+<style>
+    main {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+        gap: clamp(2rem, 0.8rem + 4vw, 4rem);
+        margin-top: clamp(3rem, 1.8rem + 4vw, 5rem);
+        width: 100%;
+    }
+</style>
+
