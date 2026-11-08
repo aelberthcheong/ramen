@@ -14,11 +14,10 @@ export type Author = {
  */
 export type Photo = {
     name: string;
-    url: string;
     width: number;
     height: number;
-    authorId?: string;
-    author?: Author;
+    url: string;
+    authorId: string;
 };
 
 /**
@@ -26,7 +25,7 @@ export type Photo = {
  */
 export type Shop = {
     id: string;
-    name?: string;
+    name: string;
     prefecture?: string;
     photos: Photo[];
 };
@@ -39,6 +38,10 @@ export type ShopsResponse = {
     lastPage: number;
     perPage: number;
     currentPage: number;
+};
+
+export type AuthorResponse = {
+    author: Author;
 };
 
 export type NavItem = {

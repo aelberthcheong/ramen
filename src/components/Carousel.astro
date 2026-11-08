@@ -2,14 +2,14 @@
 import type { ShopsResponse } from "../lib/type.ts";
 
 interface Props {
-    shops: ShopsResponse["shops"];
+    items: ShopsResponse["shops"];
 }
 
-const { shops } = Astro.props;
+const { items } = Astro.props;
 ---
 
 <section class="carousel">
-    {shops.map((shop, i) => {
+    {items.map((shop, i) => {
         const photo = shop.photos[0];
         return (
             <a

@@ -8,6 +8,7 @@
         "check": "astro check"
     },
     "dependencies": {
+        "@astrojs/sitemap": "^3.7.4",
         "@astrojs/svelte": "^9.1.2",
         "astro": "^7.4.5",
         "bits-ui": "^2.20.3",

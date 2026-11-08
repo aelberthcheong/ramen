@@ -1,0 +1,278 @@
+---
+import type { GetStaticPaths, InferGetStaticPropsType } from "astro";
+import type { ShopsResponse, AuthorResponse } from "../../lib/type.ts";
+
+import Layout from "../../layouts/Layout.astro";
+
+export const fetchAuthor = async (authorId: string): Promise<AuthorResponse> => {
+    const resp = await fetch(
+        `https://ramen-api.dev/authors/${authorId}`,
+    )
+
+    if (!resp.ok) {
+        throw new Error(`Failed to fetch from "https://ramen-api.dev/authors/${authorId}"`);
+    }
+
+    return resp.json();
+}
+
+export const fetchPage = async (page: number, maxPerPage: number): Promise<ShopsResponse> => {
+    const resp = await fetch(
+        `https://ramen-api.dev/shops?page=${page}&perPage=${maxPerPage}`,
+    );
+
+    if (!resp.ok) {
+        throw new Error(`Failed to fetch from "https://ramen-api.dev/shops?page=${page}"`);
+    }
+
+    return resp.json();
+};
+
+export const getStaticPaths = (async () => {
+    const maxPerPage = 100;
+    const first = await fetchPage(1, maxPerPage);
+    const count = Math.ceil(first.totalCount / maxPerPage);
+
+    const rest = await Promise.all(
+        Array.from(
+            { length: Math.max(count - 1, 0) }, 
+            (_, i) => fetchPage(i + 2, maxPerPage),
+        ),
+    );
+
+    const shops = [first, ...rest].flatMap((r) => r.shops);
+    return shops.map((shop) => ({
+        params: { shop: String(shop.id) },
+        props: { shop },
+    }));
+}) satisfies GetStaticPaths;
+
+type Props = InferGetStaticPropsType<typeof getStaticPaths>;
+const { shop } = Astro.props;
+
+const id = shop.photos[0].authorId        // each shop's photo(s) usually comes from the same author
+const { author } = await fetchAuthor(id);
+
+const title = `${shop.name} - ${shop.id}`;
+---
+
+<!-- TODO: For now we just use title for the description aswell
+ -->
+<Layout 
+    title={title}
+    description={title}
+>
+    <aside class="">
+        {shop.photos.map((photo) => {
+            return (
+                <figure>
+                    <img 
+                        src={photo.url} />
+                </figure>
+            );
+        })}
+    </aside>
+    <article>
+        <section>
+            <header>
+                <h1>{shop.name}</h1>
+                <p>{shop.prefecture}</p>
+            </header>
+            <p>
+                Lorem ipsum dolor sit amet consectetur adipisicing elit. Veniam,
+                excepturi quibusdam neque ab qui omnis unde debitis repellendus modi 
+                delectus provident temporibus sint laudantium ut reiciendis maxime 
+                quasi exercitationem.
+            </p>
+            <p>
+                Magnam, exercitationem vero repellendus sint, numquam fugiat a beatae quasi 
+                adipisci reprehenderit
+            </p>
+            <p>
+                <strong>Photos:</strong>
+                &nbsp;<a
+                    href={author.url}
+                    rel="noopener noreferrer"
+                    target="_blank"
+                    aria-label={author.name}>{author.name}</a
+                >
+            </p>
+        </section>
+        <section></section>
+    </article>
+</Layout>
+
+<style>
+    aside {
+        display: flex;
+
+        /* 16px < ... > 24px */
+        gap: clamp(1rem, 0.7rem + 1vw, 1.5rem);
+
+        padding-inline: var(--document-margin);
+        scroll-padding-inline: var(--document-margin);
+
+        max-inline-size: 100%;
+        overflow-x: auto;
+        -ms-scroll-chaining: none;
+        -ms-scroll-snap-type: x mandatory;
+        scroll-snap-type: x mandatory;
+    }
+
+    aside > figure {
+        /* fk no idea .. */
+        flex: 0 0 auto;
+
+        margin-left: 0;
+        margin-right: 0;
+        margin-top: 0;
+        margin-bottom: 0;
+    }
+
+    aside > figure img {
+        border-radius: var(--border-radius-md);
+
+        width: auto;
+        max-height: 55vh;
+    }
+
+    aside > figure img[width="750"] {
+        aspect-ratio: 3/4;
+    }
+
+    aside > figure img[width="1000"] {
+        aspect-ratio: 4/3;
+    }
+
+    aside > figure figcaption {
+        margin-top: .5rem;
+        font-size: .875rem;
+        opacity: .75;
+    }
+
+    article {
+        display: grid;
+        grid-template-areas: 
+            "left"
+            "right";
+        grid-template-columns: 1fr;
+        grid-template-rows: auto;
+
+        gap: clamp(2rem, 1.4rem + 2vw, 3rem);
+        padding-left: var(--document-margin);
+        padding-right: var(--document-margin);
+    }
+
+    article > section:first-of-type {
+        grid-area: left;
+        align-self: start;
+    }
+
+    article > section:first-of-type > header {
+        margin-bottom: clamp(1rem, 0.775rem + 0.75vw, 1.375rem);
+    }
+
+    article > section:last-of-type {
+        display: grid;
+        grid-auto-rows: min-content;
+        grid-area: right;
+
+        gap: 2rem;
+    }
+
+    article > section:last-of-type > section {
+        display: grid;
+        gap: 1rem;
+    }
+
+    article > section:last-of-type > section header {
+        display: flex;
+        align-items: center;
+        gap: .875rem;
+    }
+
+    article > section:last-of-type > section header img {
+        min-width: 0;
+        width: auto;
+        height: 2.25rem;
+    }
+
+    article ul > li {
+        padding-top: 1rem;
+        padding-bottom: 1rem;
+    }
+
+    article ul > li:not(:last-of-type) {
+        border-bottom: var(--border-width) solid var(--raisin);
+    }
+
+    article ul > li:first-of-type {
+        padding-top: 0;
+    }
+
+    article ul > li:last-of-type {
+        padding-bottom: 0;
+    }
+
+    article ul > li p {
+        margin-top: 0;
+        margin-bottom: 0;
+    }
+
+    article ul > li a {
+        color: inherit;
+        text-decoration: none;
+    }
+
+    article ul > li a:hover {
+        text-decoration: underline;
+    }
+
+    @media (min-width: 768px) {
+    aside > figure figcaption {
+        font-size: 1rem;
+    }
+
+    article {
+        grid-template-areas: 
+        "left right";
+        grid-template-columns: 1fr 1fr;
+    }
+
+    article > section:last-of-type {
+        /* between types of spots */
+        gap: 3rem;
+    }
+
+    article > section:last-of-type > section {
+        gap: 1.5rem;
+    }
+
+    article > section:last-of-type > section header {
+        gap: 1.125rem;
+    }
+
+    article > section:last-of-type > section header img {
+        height: 2.75rem;
+    }
+
+    article ul > li {
+        padding-top: 1.375rem;
+        padding-bottom: 1.375rem;
+    }
+    }
+
+    @media (min-width: 1280px) {
+        /**
+        * Stick intro column w/ fallback to scroll within if it goes beyond viewport
+        * height.
+        * 1. --document-margin
+        */
+        article > section:first-of-type {
+            position: sticky;
+            top: 2rem; /* 1 */
+            max-height: calc(100dvh - 2rem);
+            overflow-y: auto;
+        }
+    }
+</style>
