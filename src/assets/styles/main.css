@@ -78,6 +78,28 @@
     navigation: auto;
 }
 
+@keyframes jostle {
+    0%,
+    100% {
+        transform: none;
+    }
+    25% {
+        transform: translateX(-2px) rotate(-3deg);
+    }
+    75% {
+        transform: translateX(2px) rotate(3deg);
+    }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    ::view-transition-old(logo) {
+        display: none;
+    }
+    ::view-transition-new(logo) {
+        animation: jostle 500ms ease-in-out;
+    }
+}
+
 @media (prefers-reduced-motion: reduce) {
     :root {
         scroll-behavior: smooth;

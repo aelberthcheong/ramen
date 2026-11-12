@@ -5,8 +5,8 @@ import { headers } from "../lib/navigation.ts";
 ---
 
 <header>
-    <a href="/" aria-label="home">
-        <Logo />
+    <a href="/" aria-label="home" class="home">
+        <Logo client:visible />
     </a>
     <Navigation links={headers} currentPath={Astro.url.pathname} client:load />
 </header>
@@ -17,5 +17,10 @@ import { headers } from "../lib/navigation.ts";
         align-items: center;
         flex-shrink: 0;
         padding: var(--header-py) var(--document-margin);
+    }
+
+    /* make logo animation persists between page navigation to home  */
+    .home {
+        view-transition-name: logo;
     }
 </style>
