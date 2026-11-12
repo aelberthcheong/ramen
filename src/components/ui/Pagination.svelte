@@ -1,5 +1,6 @@
 <script lang="ts">
     import { Pagination } from "bits-ui";
+    import { navigate } from "astro:transitions/client";
 
     let {
         count,
@@ -13,9 +14,10 @@
         baseUrl?: string;
     } = $props();
 
-    // Page 1 lives at the base URL itself (e.g. "/"), the rest at "/2", "/3", ...
-    const hrefFor = (p: number) =>
-        p === 1 ? baseUrl || "/" : `${baseUrl}/${p}`;
+    const onChange = (p: number) => {
+        sessionStorage.setItem("pagination-scroll-y", String(window.scrollY));
+        navigate(p === 1 ? baseUrl || "/" : `${baseUrl}/${p}`);
+    };
 </script>
 
 <Pagination.Root
@@ -23,7 +25,7 @@
     {perPage}
     {page}
     siblingCount={1}
-    onPageChange={(p) => (window.location.href = hrefFor(p))}
+    onPageChange={onChange}
 >
     {#snippet children({ pages, range })}
         <nav class="pagination" aria-label="Pagination">

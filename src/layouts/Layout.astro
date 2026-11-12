@@ -62,6 +62,16 @@ const og = new URL(image, Astro.site);
             <slot />
         </main>
         <Footer />
+        <script>
+            // revert back to previous y-level at each pagination
+            const y = sessionStorage.getItem("pagination-scroll-y");
+            if (y !== null) {
+                sessionStorage.removeItem("pagination-scroll-y");
+                // Disable the browser's own restoration so it can't fight ours.
+                history.scrollRestoration = "manual";
+                window.scrollTo({ top: Number(y), behavior: "instant" });
+            }
+        </script>
     </body>
 </html>
 
