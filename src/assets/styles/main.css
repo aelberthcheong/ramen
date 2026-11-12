@@ -103,10 +103,12 @@ a {
 }
 
 @media (prefers-reduced-motion: no-preference) {
+    button:focus-visible,
     a:focus-visible {
         outline-offset: .5rem;
         outline: .25rem dashed var(--coral-06);
         transition: outline-offset 200ms ease !important;
+        z-index: 999;
     }
 }
 

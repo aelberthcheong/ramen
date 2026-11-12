@@ -1,16 +1,17 @@
 ---
+import type { GetStaticPaths } from "astro";
 import Layout from "../layouts/Layout.astro";
-import Logo from "../components/ui/Logo.svelte";
 import Carousel from "../components/Carousel.astro";
+import Pagination from "../components/ui/Pagination.svelte";
+import Logo from "../components/ui/Logo.svelte";
+import { fetchShops } from "../lib/api.ts";
 
-import type { ShopsResponse } from "../lib/type.ts";
+export const getStaticPaths = (async ({ paginate }) => {
+    const shops = await fetchShops();
+    return paginate(shops, { pageSize: 10 });
+}) satisfies GetStaticPaths;
 
-const resp = await fetch("https://ramen-api.dev/shops?page=1&perPage=10");
-if (!resp.ok) {
-    throw new Error(`Failed to fetch shops: ${resp.status}`);
-}
-
-const { shops } = (await resp.json()) as ShopsResponse;
+const { page } = Astro.props;
 ---
 
 <Layout>
@@ -24,7 +25,14 @@ const { shops } = (await resp.json()) as ShopsResponse;
             </p>
         </header>
     </section>
-    <Carousel items={shops} />
+    <Carousel items={page.data} />
+    <Pagination
+        client:load
+        count={page.total}
+        perPage={page.size}
+        page={page.currentPage}
+        baseUrl=""
+    />
 </Layout>
 
 <style>

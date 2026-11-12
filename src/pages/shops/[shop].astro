@@ -1,76 +1,48 @@
 ---
 import type { GetStaticPaths, InferGetStaticPropsType } from "astro";
-import type { ShopsResponse, AuthorResponse } from "../../lib/type.ts";
-
 import Layout from "../../layouts/Layout.astro";
-
-export const fetchAuthor = async (authorId: string): Promise<AuthorResponse> => {
-    const resp = await fetch(
-        `https://ramen-api.dev/authors/${authorId}`,
-    )
-
-    if (!resp.ok) {
-        throw new Error(`Failed to fetch from "https://ramen-api.dev/authors/${authorId}"`);
-    }
-
-    return resp.json();
-}
-
-export const fetchPage = async (page: number, maxPerPage: number): Promise<ShopsResponse> => {
-    const resp = await fetch(
-        `https://ramen-api.dev/shops?page=${page}&perPage=${maxPerPage}`,
-    );
-
-    if (!resp.ok) {
-        throw new Error(`Failed to fetch from "https://ramen-api.dev/shops?page=${page}"`);
-    }
-
-    return resp.json();
-};
+import { fetchShops, fetchAuthors } from "../../lib/api.ts";
 
 export const getStaticPaths = (async () => {
-    const maxPerPage = 100;
-    const first = await fetchPage(1, maxPerPage);
-    const count = Math.ceil(first.totalCount / maxPerPage);
+    const shops = await fetchShops();
 
-    const rest = await Promise.all(
-        Array.from(
-            { length: Math.max(count - 1, 0) }, 
-            (_, i) => fetchPage(i + 2, maxPerPage),
-        ),
+    // Each shop's photos usually share one author, and many shops share the
+    // same author, so fetch each author only once (cache the promises).
+    const authors = new Map<string, ReturnType<typeof fetchAuthors>>();
+    const getAuthor = (id: string) => {
+        if (!authors.has(id)) 
+            authors.set(id, fetchAuthors(id));
+        return authors.get(id)!;
+    };
+
+    return Promise.all(
+        shops.map(async (shop) => {
+            const authorId = shop.photos[0]?.authorId;
+            const author = authorId ? (await getAuthor(authorId)).author : null;
+ 
+            return {
+                params: { shop: String(shop.id) },
+                props: { shop, author },
+            };
+        }),
     );
-
-    const shops = [first, ...rest].flatMap((r) => r.shops);
-    return shops.map((shop) => ({
-        params: { shop: String(shop.id) },
-        props: { shop },
-    }));
 }) satisfies GetStaticPaths;
 
 type Props = InferGetStaticPropsType<typeof getStaticPaths>;
-const { shop } = Astro.props;
-
-const id = shop.photos[0].authorId        // each shop's photo(s) usually comes from the same author
-const { author } = await fetchAuthor(id);
+const { shop, author } = Astro.props;
 
 const title = `${shop.name} - ${shop.id}`;
 ---
 
-<!-- TODO: For now we just use title for the description aswell
+<!-- TODO: use title for the description for now
  -->
-<Layout 
-    title={title}
-    description={title}
->
-    <aside class="">
-        {shop.photos.map((photo) => {
-            return (
-                <figure>
-                    <img 
-                        src={photo.url} />
-                </figure>
-            );
-        })}
+<Layout title={title} description={title}>
+    <aside>
+        {shop.photos.map((photo) => (
+            <figure>
+                <img src={photo.url} alt={shop.name} loading="lazy" />
+            </figure>
+        ))}
     </aside>
     <article>
         <section>
@@ -78,26 +50,16 @@ const title = `${shop.name} - ${shop.id}`;
                 <h1>{shop.name}</h1>
                 <p>{shop.prefecture}</p>
             </header>
-            <p>
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Veniam,
-                excepturi quibusdam neque ab qui omnis unde debitis repellendus modi 
-                delectus provident temporibus sint laudantium ut reiciendis maxime 
-                quasi exercitationem.
-            </p>
-            <p>
-                Magnam, exercitationem vero repellendus sint, numquam fugiat a beatae quasi 
-                adipisci reprehenderit
-            </p>
-            <p>
-                <strong>Photos:</strong>
-                &nbsp;<a
-                    href={author.url}
-                    rel="noopener noreferrer"
-                    target="_blank"
-                    aria-label={author.name}>{author.name}</a
-                >
-            </p>
+            {author && (
+                <p>
+                    <strong>Photos:</strong>
+                    &nbsp;<a href={author.url} rel="noopener noreferrer" target="_blank">
+                        {author.name}
+                    </a>
+                </p>
+            )}
         </section>
+        <!-- Reserved for the right-hand column (kept so the grid layout holds) -->
         <section></section>
     </article>
 </Layout>
@@ -105,172 +67,162 @@ const title = `${shop.name} - ${shop.id}`;
 <style>
     aside {
         display: flex;
-
         /* 16px < ... > 24px */
         gap: clamp(1rem, 0.7rem + 1vw, 1.5rem);
-
+ 
         padding-inline: var(--document-margin);
         scroll-padding-inline: var(--document-margin);
-
+ 
         max-inline-size: 100%;
         overflow-x: auto;
-        -ms-scroll-chaining: none;
-        -ms-scroll-snap-type: x mandatory;
         scroll-snap-type: x mandatory;
     }
-
+ 
     aside > figure {
-        /* fk no idea .. */
-        flex: 0 0 auto;
-
-        margin-left: 0;
-        margin-right: 0;
-        margin-top: 0;
-        margin-bottom: 0;
+        flex: none;
+        margin: 0;
     }
-
+ 
     aside > figure img {
         border-radius: var(--border-radius-md);
-
         width: auto;
-        max-height: 55vh;
+        max-height: 45vh;
     }
-
+ 
     aside > figure img[width="750"] {
-        aspect-ratio: 3/4;
+        aspect-ratio: 3 / 4;
     }
-
+ 
     aside > figure img[width="1000"] {
-        aspect-ratio: 4/3;
+        aspect-ratio: 4 / 3;
     }
-
+ 
     aside > figure figcaption {
-        margin-top: .5rem;
-        font-size: .875rem;
-        opacity: .75;
+        margin-top: 0.5rem;
+        font-size: 0.875rem;
+        opacity: 0.75;
     }
-
+ 
     article {
         display: grid;
-        grid-template-areas: 
+        grid-template-areas:
             "left"
             "right";
         grid-template-columns: 1fr;
-        grid-template-rows: auto;
-
         gap: clamp(2rem, 1.4rem + 2vw, 3rem);
-        padding-left: var(--document-margin);
-        padding-right: var(--document-margin);
+        padding-inline: var(--document-margin);
     }
-
+ 
     article > section:first-of-type {
         grid-area: left;
         align-self: start;
+ 
+        & > header {
+            margin-bottom: clamp(1rem, 0.775rem + 0.75vw, 1.375rem);
+ 
+            & > h1 {
+                margin-bottom: 4px;
+            }
+        }
     }
-
-    article > section:first-of-type > header {
-        margin-bottom: clamp(1rem, 0.775rem + 0.75vw, 1.375rem);
-    }
-
+ 
     article > section:last-of-type {
         display: grid;
-        grid-auto-rows: min-content;
         grid-area: right;
-
+        grid-auto-rows: min-content;
         gap: 2rem;
+ 
+        & > section {
+            display: grid;
+            gap: 1rem;
+ 
+            & header {
+                display: flex;
+                align-items: center;
+                gap: 0.875rem;
+ 
+                & img {
+                    min-width: 0;
+                    width: auto;
+                    height: 2.25rem;
+                }
+            }
+        }
     }
-
-    article > section:last-of-type > section {
-        display: grid;
-        gap: 1rem;
-    }
-
-    article > section:last-of-type > section header {
-        display: flex;
-        align-items: center;
-        gap: .875rem;
-    }
-
-    article > section:last-of-type > section header img {
-        min-width: 0;
-        width: auto;
-        height: 2.25rem;
-    }
-
+ 
     article ul > li {
-        padding-top: 1rem;
-        padding-bottom: 1rem;
+        padding-block: 1rem;
+ 
+        &:not(:last-of-type) {
+            border-bottom: var(--border-width) solid var(--raisin);
+        }
+ 
+        &:first-of-type {
+            padding-top: 0;
+        }
+ 
+        &:last-of-type {
+            padding-bottom: 0;
+        }
+ 
+        & p {
+            margin-block: 0;
+        }
+ 
+        & a {
+            color: inherit;
+            text-decoration: none;
+ 
+            &:hover {
+                text-decoration: underline;
+            }
+        }
     }
-
-    article ul > li:not(:last-of-type) {
-        border-bottom: var(--border-width) solid var(--raisin);
-    }
-
-    article ul > li:first-of-type {
-        padding-top: 0;
-    }
-
-    article ul > li:last-of-type {
-        padding-bottom: 0;
-    }
-
-    article ul > li p {
-        margin-top: 0;
-        margin-bottom: 0;
-    }
-
-    article ul > li a {
-        color: inherit;
-        text-decoration: none;
-    }
-
-    article ul > li a:hover {
-        text-decoration: underline;
-    }
-
+ 
     @media (min-width: 768px) {
-    aside > figure figcaption {
-        font-size: 1rem;
+        aside > figure figcaption {
+            font-size: 1rem;
+        }
+ 
+        article {
+            grid-template-areas: "left right";
+            grid-template-columns: 1fr 1fr;
+        }
+ 
+        article > section:last-of-type {
+            gap: 3rem; /* between types of spots */
+ 
+            & > section {
+                gap: 1.5rem;
+ 
+                & header {
+                    gap: 1.125rem;
+ 
+                    & img {
+                        height: 2.75rem;
+                    }
+                }
+            }
+        }
+ 
+        article ul > li {
+            padding-block: 1.375rem;
+ 
+            &:first-of-type {
+                padding-top: 0;
+            }
+ 
+            &:last-of-type {
+                padding-bottom: 0;
+            }
+        }
     }
-
-    article {
-        grid-template-areas: 
-        "left right";
-        grid-template-columns: 1fr 1fr;
-    }
-
-    article > section:last-of-type {
-        /* between types of spots */
-        gap: 3rem;
-    }
-
-    article > section:last-of-type > section {
-        gap: 1.5rem;
-    }
-
-    article > section:last-of-type > section header {
-        gap: 1.125rem;
-    }
-
-    article > section:last-of-type > section header img {
-        height: 2.75rem;
-    }
-
-    article ul > li {
-        padding-top: 1.375rem;
-        padding-bottom: 1.375rem;
-    }
-    }
-
+ 
     @media (min-width: 1280px) {
-        /**
-        * Stick intro column w/ fallback to scroll within if it goes beyond viewport
-        * height.
-        * 1. --document-margin
-        */
+        /* Sticky intro column; scrolls internally if taller than the viewport. */
         article > section:first-of-type {
             position: sticky;
-            top: 2rem; /* 1 */
+            top: 2rem; /* matches --document-margin */
             max-height: calc(100dvh - 2rem);
             overflow-y: auto;
         }

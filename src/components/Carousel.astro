@@ -29,7 +29,7 @@ const { items } = Astro.props;
                         />
                     </figure>
                 )}
-                <h3 lang="ja">{shop.name}</h3>
+                <h3 lang="ja">{shop.name.substring(0, 10)}</h3>
                 <p lang="ja">{shop.prefecture}</p>
             </a>
         );
@@ -38,15 +38,18 @@ const { items } = Astro.props;
 
 <style>
     .carousel {
-        padding-top: 1rem;
-        padding-bottom: 1rem;
-
         display: flex;
         gap: clamp(1rem, 0.4rem + 2vw, 2rem);
+
+        /* room for the entrance shift and the hover backdrop */
+        padding-block: 1.5rem;
+        margin-block: -0.5rem;
         padding-inline: var(--document-margin);
         scroll-padding-inline: var(--document-margin);
+
         max-inline-size: 100%;
         overflow-x: auto;
+        overflow-y: hidden; /* never show a vertical scrollbar */
         scroll-snap-type: x mandatory;
     }
 

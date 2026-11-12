@@ -6,7 +6,6 @@ import type { NavItem } from "./type.ts";
 export type { NavItem };
 
 export const headers: NavItem[] = [
-    { href: "/shops", label: "Shops" },
     { href: "/about", label: "About" },
 ];
 
