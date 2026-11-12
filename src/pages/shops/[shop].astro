@@ -39,16 +39,17 @@ const title = `${shop.name} - ${shop.id}`;
  -->
 <Layout title={title} description={title}>
     <aside>
-        {shop.photos.map((photo) => (
+        {shop.photos.map((photo, i) => (
             <figure>
                 <img
-                    src={cdn_image(photo.url, 800)}
-                    srcset={cdn_srcset(photo.url)}
-                    sizes="(max-width: 768px) 80vw, 600px"
+                    src={cdn_image(photo.url, { width: 1200, height: 1200 })}
+                    srcset={cdn_srcset(photo.url, [800, 1200])}
+                    sizes="60vh"
                     width={photo.width}
                     height={photo.height}
                     alt={shop.name}
-                    loading="lazy"
+                    loading={i === 0 ? "eager" : "lazy"}
+                    fetchpriority={i === 0 ? "high" : "auto"}
                     decoding="async"
                 />
             </figure>
@@ -97,14 +98,6 @@ const title = `${shop.name} - ${shop.id}`;
         border-radius: var(--border-radius-md);
         width: auto;
         max-height: 45vh;
-    }
- 
-    aside > figure img[width="750"] {
-        aspect-ratio: 3 / 4;
-    }
- 
-    aside > figure img[width="1000"] {
-        aspect-ratio: 4 / 3;
     }
  
     aside > figure figcaption {

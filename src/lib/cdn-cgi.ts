@@ -1,13 +1,26 @@
-// Keep few: prohibits as each cache cost quota
-const INLINE_W = [400, 800, 1200];
+type Opts = {
+    width?: number;
+    height?: number;
+    fit?: "scale-down" | "cover" | "contain";
+    quality?: number;
+};
 
-export function cdn_image(url: string, width = 800, quality = 75): string {
+export function cdn_image(url: string, o: Opts = {}): string {
     if (!import.meta.env.PROD) {
         return url;
     }
-    return `/cdn-cgi/image/width=${width},quality=${quality},format=auto/${url}`;
+    const { width, height, fit = "scale-down", quality = 85 } = o;
+    const p = [
+        width && `width=${width}`,
+        height && `height=${height}`,
+        `fit=${fit}`,
+        `quality=${quality}`,
+        "metadata=none",
+        "format=auto",
+    ].filter(Boolean);
+    return `/cdn-cgi/image/${p.join(",")}/${url}`;
 }
 
-export function cdn_srcset(url: string, transfw = INLINE_W): string {
-    return transfw.map((w) => `${cdn_image(url, w)} ${w}w`).join(", ");
+export function cdn_srcset(url: string, sizes = [800, 1200]): string {
+    return sizes.map((s) => `${cdn_image(url, { width: s, height: s })} ${s}w`).join(", ");
 }
