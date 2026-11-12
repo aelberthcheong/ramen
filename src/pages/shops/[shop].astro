@@ -2,6 +2,7 @@
 import type { GetStaticPaths, InferGetStaticPropsType } from "astro";
 import Layout from "../../layouts/Layout.astro";
 import { fetchShops, fetchAuthors } from "../../lib/api.ts";
+import { cdn_image, cdn_srcset } from "../../lib/cdn-cgi";
 
 export const getStaticPaths = (async () => {
     const shops = await fetchShops();
@@ -40,7 +41,16 @@ const title = `${shop.name} - ${shop.id}`;
     <aside>
         {shop.photos.map((photo) => (
             <figure>
-                <img src={photo.url} alt={shop.name} loading="lazy" />
+                <img
+                    src={cdn_image(photo.url, 800)}
+                    srcset={cdn_srcset(photo.url)}
+                    sizes="(max-width: 768px) 80vw, 600px"
+                    width={photo.width}
+                    height={photo.height}
+                    alt={shop.name}
+                    loading="lazy"
+                    decoding="async"
+                />
             </figure>
         ))}
     </aside>
@@ -222,7 +232,7 @@ const title = `${shop.name} - ${shop.id}`;
         /* Sticky intro column; scrolls internally if taller than the viewport. */
         article > section:first-of-type {
             position: sticky;
-            top: 2rem; /* matches --document-margin */
+            top: 2rem;
             max-height: calc(100dvh - 2rem);
             overflow-y: auto;
         }

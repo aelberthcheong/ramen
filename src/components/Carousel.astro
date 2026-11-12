@@ -1,5 +1,6 @@
 ---
 import type { ShopsResponse } from "../lib/type.ts";
+import { cdn_image, cdn_srcset } from "../lib/cdn-cgi";
 
 interface Props {
     items: ShopsResponse["shops"];
@@ -20,12 +21,15 @@ const { items } = Astro.props;
                 {photo && (
                     <figure class="photo">
                         <img
-                            src={photo.url}
+                            src={cdn_image(photo.url, 400)}
+                            srcset={cdn_srcset(photo.url, [300, 400, 800])}
+                            sizes="(max-width: 768px) 70vw, 300px"
                             alt={shop.name}
                             width={photo.width}
                             height={photo.height}
                             loading={i < 2 ? "eager" : "lazy"}
                             fetchpriority={i < 2 ? "high" : "auto"}
+                            decoding="async"
                         />
                     </figure>
                 )}
