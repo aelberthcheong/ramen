@@ -8,9 +8,9 @@
         "check": "astro check"
     },
     "dependencies": {
-        "@astrojs/sitemap": "^3.7.4",
-        "@astrojs/svelte": "^9.1.2",
-        "astro": "^7.4.5",
+        "@astrojs/sitemap": "^3.7.6",
+        "@astrojs/svelte": "^9.1.6",
+        "astro": "^7.4.13",
         "bits-ui": "^2.20.3",
         "svelte": "^5.57.3"
     },
